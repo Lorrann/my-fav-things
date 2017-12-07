@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyFavThings.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Diagnostics;
 
 namespace MyFavThings.Web.Api
 {
@@ -30,6 +30,8 @@ namespace MyFavThings.Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.ConfigureIdentityProvider(Configuration.GetConnectionString("MyFavThingsDb"));
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
@@ -102,6 +104,7 @@ namespace MyFavThings.Web.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyFavThings V1");
             });
 
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
